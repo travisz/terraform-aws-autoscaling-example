@@ -1,0 +1,16 @@
+#cloud-config
+
+bootcmd:
+  - mkdir -p /mnt/efs
+  - yum -y install amazon-efs-utils
+  - mkdir -p "${mount_point_1}"
+  - echo "${efs_volume_id}:/ ${mount_point_1} efs defaults,_netdev 0 0" >> /etc/fstab
+  - mount -a -t efs defaults
+  - yum -y install httpd24
+  - systemctl enable httpd
+  - systemctl start httpd
+
+runcmd:
+  - yum -y update
+  - yum install -y ruby
+  - cd /home/ec2-user && curl -O https://aws-codedeploy-us-east-1.s3.amazonaws.com/latest/install && chmod +x ./install && ./install auto && /bin/rm /home/ec2-user/install
